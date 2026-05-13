@@ -29,6 +29,10 @@ CREATE TABLE clan_logs (
     FOREIGN KEY (clan_tag, server_id)
         REFERENCES server_clans(tag, server_id)
         ON DELETE CASCADE
+);
+
+CREATE TABLE server_roles (
+
 )
 
 CREATE TABLE clan_position_roles (
