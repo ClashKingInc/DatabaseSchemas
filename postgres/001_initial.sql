@@ -4,6 +4,7 @@ CREATE TABLE servers (
     name text NOT NULL
 );
 
+
 CREATE TABLE server_clans (
     tag text NOT NULL,
     server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
@@ -81,6 +82,51 @@ CREATE TABLE league_roles (
     role_id text NOT NULL,
     PRIMARY KEY (server_id, league_id)
 );
+
+CREATE TABLE rosters (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+    linked_clan_tag text NOT NULL,
+    title text NOT NULL,
+    description text NOT NULL,
+    max_size int NOT NULL,
+    minimum_townhall int,
+    maximum_townhall int,
+    image_url text,
+    signup_role_id text,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+class TABLE roster_members (
+    tag text NOT NULL,
+    roster_id uuid NOT NULL REFERENCES rosters(id) ON DELETE CASCADE,
+    PRIMARY KEY (tag, roster_id)
+);
+
+CREATE TABLE audit_history (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    resource_id uuid,
+    resource_type text NOT NULL,
+    description text NOT NULL,
+    user_id text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE one_time_login_tokens (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    user_id text NOT NULL,
+    token_hash text NOT NULL UNIQUE,
+    expires_at timestamptz NOT NULL,
+    used_at timestamptz,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_one_time_login_tokens_user_id
+    ON one_time_login_tokens (user_id);
+
+CREATE INDEX idx_one_time_login_tokens_expires_at
+    ON one_time_login_tokens (expires_at);
+
 
 CREATE TABLE basic_clan (
     tag text PRIMARY KEY,
