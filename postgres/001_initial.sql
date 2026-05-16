@@ -34,10 +34,6 @@ CREATE TABLE clan_logs (
         ON DELETE CASCADE
 );
 
-CREATE TABLE server_roles (
-
-)
-
 CREATE TABLE clan_position_roles (
     id uuid PRIMARY KEY DEFAULT uuidv7(),
     server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
@@ -240,6 +236,87 @@ CREATE TABLE embeds (
     server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
     name text NOT NULL,
     data jsonb NOT NULL
-)
+);
+
+CREATE TABLE ticket_panel (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+    name text NOT NULL,
+    description text NOT NULL,
+    parent_channel_id text, -- if NULL, then opens tickets as a thread under this channel
+    open_category_id text,
+    closed_category_id text,
+    log_channel_id text,
+    naming_convention text,
+    embed_id uuid REFERENCES embeds(id) ON DELETE SET NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE ticket_panel_staff_permissions (
+    panel_id uuid NOT NULL REFERENCES ticket_panel(id) ON DELETE CASCADE,
+    role_id text NOT NULL,
+    permissions int NOT NULL, -- bitmask of permissions
+    PRIMARY KEY (panel_id, role_id)
+);
+
+CREATE TABLE ticket_panel_buttons (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    panel_id uuid NOT NULL,
+    open_message_embed_id uuid REFERENCES embeds(id) ON DELETE SET NULL,
+    questions varchar(200)[] NOT NULL DEFAULT '{}'
+        CHECK (cardinality(questions) <= 5)
+    staff_roles text[] NOT NULL DEFAULT '{}'
+    roles_add_on_open text[] NOT NULL DEFAULT '{}'
+    roles_remove_on_open text[] NOT NULL DEFAULT '{}'
+    roles_add_on_close text[] NOT NULL DEFAULT '{}'
+    roles_remove_on_close text[] NOT NULL DEFAULT '{}'
+    allow_account_apply int NOT NULL DEFAULT 0 -- 0 means no, else amount of accounts to allow for application
+    min_townhall_level int
+    max_townhall_level int
+    staff_private_thread boolean NOT NULL DEFAULT false
+    send_player_info_to_channel boolean NOT NULL DEFAULT false
+    send_player_info_to_private_thread boolean NOT NULL DEFAULT false
+    auto_transcript boolean NOT NULL DEFAULT true
+    staff_to_ping text[] DEFAULT '{}' -- if NULL, then no ping, if array is set, then ping those roles
+
+    -- if any of these are null use the ricket panel settings, otherwise use these as overrides
+    parent_channel_id text,
+    open_category_id text,
+    closed_category_id text,
+    log_channel_id text,
+    naming_convention text,
+
+
+    PRIMARY KEY (panel_id) REFERENCES ticket_panel(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE tickets (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+    channel_id text PRIMARY KEY
+    is_thread boolean NOT NULL DEFAULT false,
+    status_id int NOT NULL DEFAULT 0,
+    number serial NOT NULL,
+    panel_id uuid NOT NULL REFERENCES ticket_panel(id) ON DELETE CASCADE,
+    applicant_accounts text[] NOT NULL DEFAULT '{}',
+    created_at timestamptz NOT NULL DEFAULT now(),
+    closed_at timestamptz
+);
+
+CREATE TABLE reminders (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+    type int NOT NULL,
+    clan_tag text NOT NULL,
+    webhook_token text NOT NULL,
+    thread_id text,
+    minutes_remaining int NOT NULL,
+    custom_text text NOT NULL DEFAULT "",
+    clan_roles int NOT NULL DEFAULT 0, -- is bitmask
+    townhalls int[],
+    war_types int NOT NULL DEFAULT 0, -- is bitmask
+    trigger_threshold int,
+);
 
 -- +goose Down
