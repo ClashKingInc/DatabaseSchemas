@@ -2,6 +2,8 @@
 CREATE TABLE servers (
     id text PRIMARY KEY,
     name text NOT NULL
+    joined_at timestamptz NOT NULL DEFAULT now()
+    left_at timestamptz
 );
 
 
@@ -231,6 +233,13 @@ CREATE TABLE hall_counts (
     level int NOT NULL,
     total_count int NOT NULL,
     PRIMARY KEY (village_type, level)
+);
+
+CREATE TABLE embeds (
+    id uuid PRIMARY KEY DEFAULT uuidv7(),
+    server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+    name text NOT NULL,
+    data jsonb NOT NULL
 )
 
 -- +goose Down
