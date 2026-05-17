@@ -311,7 +311,7 @@ CREATE TABLE strikes (
     date_created timestamptz NOT NULL,
     reason text NOT NULL,
     added_by text NOT NULL,
-    strike_weight integer,
+    strike_weight integer, -- if the weight is NULL, then the strike is a BAN
     rollover_date timestamptz,
     PRIMARY KEY (id, server_id)
 );
@@ -418,7 +418,7 @@ CREATE TABLE ticket_panel (
     server_id text NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
     name text NOT NULL,
     description text NOT NULL,
-    parent_channel_id text,
+    parent_channel_id text, -- if NULL, then opens tickets as a thread under this channel
     open_category_id text,
     closed_category_id text,
     log_channel_id text,
@@ -430,7 +430,7 @@ CREATE TABLE ticket_panel (
 CREATE TABLE ticket_panel_staff_permissions (
     panel_id uuid NOT NULL REFERENCES ticket_panel(id) ON DELETE CASCADE,
     role_id text NOT NULL,
-    permissions integer NOT NULL,
+    permissions integer NOT NULL, -- bitmask of permissions
     PRIMARY KEY (panel_id, role_id)
 );
 
@@ -444,14 +444,16 @@ CREATE TABLE ticket_panel_buttons (
     roles_remove_on_open text[] NOT NULL DEFAULT '{}',
     roles_add_on_close text[] NOT NULL DEFAULT '{}',
     roles_remove_on_close text[] NOT NULL DEFAULT '{}',
-    allow_account_apply integer NOT NULL DEFAULT 0,
+    allow_account_apply integer NOT NULL DEFAULT 0, -- 0 means no, else amount of accounts to allow for application
     min_townhall_level integer,
     max_townhall_level integer,
     staff_private_thread boolean NOT NULL DEFAULT false,
     send_player_info_to_channel boolean NOT NULL DEFAULT false,
     send_player_info_to_private_thread boolean NOT NULL DEFAULT false,
     auto_transcript boolean NOT NULL DEFAULT true,
-    staff_to_ping text[] DEFAULT '{}',
+    staff_to_ping text[] DEFAULT '{}', -- if NULL, then no ping, if array is set, then ping those roles
+
+    -- if any of these are NULL use the ticket panel settings, otherwise use these as overrides
     parent_channel_id text,
     open_category_id text,
     closed_category_id text,
@@ -481,9 +483,9 @@ CREATE TABLE reminders (
     thread_id text,
     minutes_remaining integer NOT NULL,
     custom_text text NOT NULL DEFAULT '',
-    clan_roles integer NOT NULL DEFAULT 0,
+    clan_roles integer NOT NULL DEFAULT 0, -- is bitmask
     townhalls integer[],
-    war_types integer NOT NULL DEFAULT 0,
+    war_types integer NOT NULL DEFAULT 0, -- is bitmask
     trigger_threshold integer
 );
 
