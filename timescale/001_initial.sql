@@ -25,8 +25,7 @@ CREATE TABLE join_leave_history (
     event_type text NOT NULL CHECK (event_type IN ('join', 'leave')),
     clan_tag text NOT NULL,
     player_tag text NOT NULL,
-    player_name text NOT NULL,
-    townhall_level smallint NOT NULL
+    townhall_level smallint NOT NULL DEFAULT 0
 );
 
 SELECT create_hypertable(
@@ -41,14 +40,42 @@ CREATE INDEX idx_join_leave_history_clan_time
 CREATE INDEX idx_join_leave_history_player_time
     ON join_leave_history (player_tag, event_time DESC);
 
+CREATE TABLE clan_change_history (
+    event_time timestamptz NOT NULL DEFAULT now(),
+    clan_tag text NOT NULL,
+    change_type text NOT NULL CHECK (
+        change_type IN ('description', 'clan_level', 'cwl_league_id', 'capital_league_id')
+    ),
+    previous_value jsonb NOT NULL,
+    current_value jsonb NOT NULL
+);
+
+SELECT create_hypertable(
+    'clan_change_history',
+    'event_time',
+    if_not_exists => TRUE
+);
+
+CREATE INDEX idx_clan_change_history_clan_time
+    ON clan_change_history (clan_tag, event_time DESC);
+
+CREATE INDEX idx_clan_change_history_type_time
+    ON clan_change_history (change_type, event_time DESC);
+
+CREATE TABLE basic_player (
+    tag text PRIMARY KEY,
+    name text NOT NULL,
+    league_id integer,
+    townhall_level integer NOT NULL,
+    last_updated timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE battlelogs (
     battle_id uuid NOT NULL,
     army_hash numeric(20, 0) NOT NULL,
     player_tag text NOT NULL,
-    player_name text NOT NULL,
     player_th smallint NOT NULL,
     opponent_tag text NOT NULL,
-    opponent_name text NOT NULL,
     opponent_th smallint NOT NULL,
     league_id integer NOT NULL,
     battle_type text NOT NULL,
@@ -336,15 +363,26 @@ CREATE INDEX idx_one_time_login_tokens_expires_at
 CREATE TABLE basic_clan (
     tag text PRIMARY KEY,
     name text NOT NULL,
-    location_id integer NOT NULL,
-    cwl_league_id integer NOT NULL,
+    description text NOT NULL DEFAULT '',
+    clan_level integer NOT NULL DEFAULT 0,
+    location_id integer,
+    cwl_league_id integer,
+    capital_league_id integer,
     public_war_log boolean NOT NULL,
     war_wins integer NOT NULL,
     member_count integer NOT NULL,
     badge_url text NOT NULL,
     troops_donated integer NOT NULL,
-    troops_received integer NOT NULL
+    troops_received integer NOT NULL,
+    member_tags text[] NOT NULL DEFAULT '{}',
+    last_active timestamptz
 );
+
+CREATE INDEX idx_basic_clan_member_count
+    ON basic_clan (member_count);
+
+CREATE INDEX idx_basic_clan_last_active
+    ON basic_clan (last_active);
 
 CREATE MATERIALIZED VIEW war_league_counts AS
 SELECT
