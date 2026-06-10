@@ -1,9 +1,9 @@
-name: clashking-local-data
+name: clashking_tracking
 
 services:
   timescale:
     image: timescale/timescaledb:latest-pg18
-    container_name: clashking-local-timescale
+    container_name: clashking-tracking-timescale
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-tracking}
@@ -21,7 +21,7 @@ services:
 
   valkey:
     image: valkey/valkey:8
-    container_name: clashking-local-valkey
+    container_name: clashking-tracking-valkey
     restart: unless-stopped
     command: ["valkey-server", "--appendonly", "yes"]
     ports:
@@ -36,7 +36,7 @@ services:
 
   redis-insight:
     image: redis/redisinsight:latest
-    container_name: clashking-local-redis-insight
+    container_name: clashking-tracking-redis-insight
     restart: unless-stopped
     depends_on:
       valkey:
@@ -47,8 +47,8 @@ services:
       - redis-insight-data:/data
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: clashking-local-jaeger
+    image: jaegertracing/all-in-one:1.57
+    container_name: clashking-tracking-jaeger
     restart: unless-stopped
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
