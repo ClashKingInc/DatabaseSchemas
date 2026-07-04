@@ -8,8 +8,8 @@ The compose project name is intentionally `clashking_tracking` so Docker reuses
 the same container/volume names as the tracking development stack, including
 the existing Timescale data volume.
 
-Each compose file requires its env vars to be set. Copy `.env.example` to
-`.env` or export the variables in your shell before starting services.
+Set the env vars in Coolify, copy `.env.example` to `.env`, or export the
+variables in your shell before starting services.
 
 ## Start
 
