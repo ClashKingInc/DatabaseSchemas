@@ -42,30 +42,9 @@ Services:
 | Timescale/Postgres | `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST_BIND_IP}:${TIMESCALE_PORT}/${POSTGRES_DB}?sslmode=disable` |
 | Valkey | `${HOST_BIND_IP}:${VALKEY_PORT}` |
 
-Set `HOST_BIND_IP` to the server's Cloudflare Mesh IP, such as `100.96.0.1`, so
-services are reachable to devices on the Mesh but not published on the public
-interface. Use `127.0.0.1` instead when only same-host access is needed.
-
-## Cloudflare Mesh
-
-Cloudflare Mesh is not a `cloudflared` tunnel service. Mesh nodes run the
-Cloudflare One Client (`warp-cli`) on the Linux host in headless connector mode.
-Install it on the server from the Cloudflare Zero Trust dashboard:
-
-1. Go to **Networking** > **Mesh**.
-2. Select **Add a node**.
-3. Create the node and copy the Linux install commands from Cloudflare.
-4. Run the generated install commands on the server.
-5. Register and connect the node:
-
-```bash
-sudo warp-cli connector new <TOKEN>
-sudo warp-cli connect
-warp-cli status
-```
-
-After the node is online, connect to these services through the server's Mesh IP
-and the Mesh-bound host ports.
+Set `HOST_BIND_IP` to `127.0.0.1` when only same-host access is needed. Use an
+explicit trusted interface when another host must connect; do not bind database
+services to a public interface.
 
 ## Apply Timescale Schema
 

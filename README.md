@@ -43,17 +43,3 @@ See [`design/README.md`](design/README.md) and
 
 Browse [`docs/skills-catalog.md`](docs/skills-catalog.md). Each directory under
 `skills/` is self-contained and can be copied into a Codex skills directory.
-
-## Repository history
-
-The repository was renamed from `ClashKingInc/DatabaseSchemas` to
-`ClashKingInc/DevKit`. The two-commit history of the public
-`ClashKingInc/ClahKingDesignSystem` repository is preserved in this Git history.
-The source design-system repository remains unchanged until its migration is
-reviewed separately.
-
-## Secrets
-
-Do not commit `.env` files, migration checkpoints, tokens, database URLs, or
-generated build output. Tracked examples must contain keys and placeholders
-only.

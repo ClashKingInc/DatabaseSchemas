@@ -80,8 +80,8 @@ for file in *.go; do GOCACHE=/tmp/go-cache go test "$file"; done
 ## Remote database safety
 
 - Verify the target host, database, and Goose status before mutation.
-- Keep Timescale and Valkey off public interfaces. Bind to loopback or the
-  approved Cloudflare Mesh address.
+- Keep Timescale and Valkey off public interfaces. Bind to loopback or another
+  explicitly trusted private interface.
 - Never print DSNs, passwords, tokens, or migration-state contents containing
   sensitive identifiers.
 - Preserve a live checkpoint and monitor progress when a long backfill runs on
