@@ -116,3 +116,8 @@ arrive.
 `mobile_live_activities` stores active iOS ActivityKit push tokens and their war identity.
 Workers should only push rows with `status = 'active'` and should update `last_payload_hash`
 after successful delivery to avoid repeated Dynamic Island score updates.
+
+`mobile_notification_recipients` joins active subscriptions, device preferences, push devices,
+and linked accounts. Filter it by `notification_type`, `environment`, and
+`resolved_player_tag`. Global notifications may ignore `resolved_player_tag` and must select
+distinct `push_device_id` values to avoid duplicate sends for users with multiple accounts.
