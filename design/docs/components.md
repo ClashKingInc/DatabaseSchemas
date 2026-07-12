@@ -108,6 +108,9 @@ Uniformity contract:
 - Upgrade category headers should match the app's main Player, Clan, and War
   cards: near-black surfaces, quiet outlines, and no glass on ordinary list
   content. Expanded artwork grids remain unboxed and lazy.
+- The tracker Progress overview is a structural content card, not floating
+  chrome. It uses the same near-black `CKSectionPanel` surface as Player and
+  Clan cards; do not use `CKGlassPanel` for this hero-sized summary.
 - Dense mixed categories use quiet text subheads before their grids. Laboratory
   groups by troop, spell, and siege type; Equipment groups by assigned hero.
   These subheads do not introduce another card surface.
