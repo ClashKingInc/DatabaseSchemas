@@ -93,12 +93,18 @@ Uniformity contract:
 - Scenic sliver headers darken artwork with a clipped gradient overlay, never a
   `ColorFiltered` save-layer. Filter layers can retain oversized compositor
   bounds and dim sibling tab/body slivers until the next scroll repaint.
-- Upgrade Tracker uses five integrated profile tabs: Home Village, Builder
-  Base, Plan, Calendar, and Collection. Never move tracker content into a
+- Upgrade Tracker uses five integrated profile tabs in this order: Home
+  Village, Builder Base, Calendar, Plan, and Collection. Never move tracker content into a
   separate overview page or modal sheet when it belongs in this tab system.
   Completion, remaining levels, finish date, identity, and freshness stay in
   the shared header; ongoing work appears in its village tab; Plan owns its
-  controls and Loot Outlook; Calendar owns the timeline.
+  Loot Outlook and full plan; Calendar owns the timeline. Gold Pass and
+  priority controls are global plan inputs and live in the hero header.
+- Calendar opens directly on its timeline with a 60-day horizon. Its date row
+  remains pinned while lanes scroll vertically, and it shares the timeline's
+  horizontal coordinate space so dates stay aligned with upgrade bars.
+- Collection categories start collapsed. Entering the tab must not choose or
+  open a category on the user's behalf.
 - Every searchable profile tab places the shared search field and filter in its
   content surface immediately below the tab bar. The tab owns query/filter
   state; the hero header does not jump when those controls change.
