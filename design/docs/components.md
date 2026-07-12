@@ -126,6 +126,10 @@ Uniformity contract:
 - Village rows are parent navigation surfaces: keep their height stable and
   communicate expansion through the chevron and revealed hierarchy, without
   adding a second enclosing surface.
+- When an expanded header releases its card surface into an unboxed grid, draw
+  a quiet animated bottom rule inside the existing fixed header height. The
+  rule marks the content breakpoint without changing density or restoring an
+  enclosing section box.
 - Compact category headers use the 44dp interaction minimum without extra
   vertical card padding. This density applies to Upgrade and Collection
   category shells. Phone upgrade grids target five square items per row.
