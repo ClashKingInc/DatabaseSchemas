@@ -90,9 +90,12 @@ Uniformity contract:
   freshness, and global actions stay stable. Use `InfoHeroBackdrop`,
   `HeaderIconButton`, and shared header stat panels rather than recreating the
   gradient, action sizing, or glass recipe.
-- Upgrade Tracker has exactly three peer profile tabs: Home Village, Builder
-  Base, and Collection. Planning and Loot Outlook are contextual village tools,
-  not peer navigation destinations.
+- Upgrade Tracker uses five integrated profile tabs: Home Village, Builder
+  Base, Plan, Calendar, and Collection. Never move tracker content into a
+  separate overview page or modal sheet when it belongs in this tab system.
+  Completion, remaining levels, finish date, identity, and freshness stay in
+  the shared header; ongoing work appears in its village tab; Plan owns its
+  controls and Loot Outlook; Calendar owns the timeline.
 - Every searchable profile tab places the shared search field and filter in its
   content surface immediately below the tab bar. The tab owns query/filter
   state; the hero header does not jump when those controls change.
