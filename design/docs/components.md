@@ -100,6 +100,9 @@ Uniformity contract:
   the shared header; ongoing work appears in its village tab; Plan owns its
   Loot Outlook and full plan; Calendar owns the timeline. Gold Pass and
   priority controls are global plan inputs and live in the hero header.
+- Home Village and Builder Base expose the shared village completion breakdown
+  from an info action in the hero header. Reuse the existing completion-date and
+  resource-cost summary; do not duplicate it inside tab content.
 - Calendar opens directly on its timeline with a 60-day horizon. Its date row
   remains pinned while lanes scroll vertically, and it shares the timeline's
   horizontal coordinate space so dates stay aligned with upgrade bars.
