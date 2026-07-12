@@ -81,6 +81,21 @@ Rules:
 
 Uniformity contract:
 
+- Detail screens with several peer content domains use the shared profile
+  composition established by Player and Clan: scenic identity header, shared
+  `InfoProfileTabs`, then tab-owned scroll content. Do not introduce a
+  segmented control as competing primary navigation inside an app bar.
+- Hero headers own identity and cross-tab summary information. The selected tab
+  may change the backdrop, hall artwork, and metrics, while account name, tag,
+  freshness, and global actions stay stable. Use `InfoHeroBackdrop`,
+  `HeaderIconButton`, and shared header stat panels rather than recreating the
+  gradient, action sizing, or glass recipe.
+- Upgrade Tracker has exactly three peer profile tabs: Home Village, Builder
+  Base, and Collection. Planning and Loot Outlook are contextual village tools,
+  not peer navigation destinations.
+- Every searchable profile tab places the shared search field and filter in its
+  content surface immediately below the tab bar. The tab owns query/filter
+  state; the hero header does not jump when those controls change.
 - Tracker search fields use the app's shared `AppSearchField`; do not style a
   raw `TextField` independently in sheets or tabs.
 - Editable search fields use the stable dark card surface shared by the main
