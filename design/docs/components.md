@@ -56,10 +56,9 @@ Rules:
 
 ### `CKSectionPanel`
 
-Use for ordinary list, grid, and explanatory sections. It is deliberately
-quieter than `CKGlassPanel` so material depth continues to communicate
-hierarchy. Use one outer panel per logical section and avoid card-in-card
-nesting.
+Use for ordinary list, grid, and explanatory sections. It follows the app's
+near-black card surface with a quiet outline, while `CKGlassPanel` remains
+reserved for floating controls and elevated chrome. Avoid card-in-card nesting.
 
 ### `CKSegmentedControl`
 
@@ -74,9 +73,9 @@ Rules:
   and is appropriate when nearby content already provides strong context.
 - Keep selected labels neutral. Selection comes from the filled indicator and
   weight; brand red is not a generic selected-text color.
-- Use compact symbols when options represent status, and use real game assets
-  when options represent Home Village or Builder Base. The selected segment is
-  a quiet fill, not a second outlined pill inside the control.
+- Keep selector labels text-only unless a separate, documented control variant
+  is introduced. The selected segment is a quiet fill, not a second outlined
+  pill inside the control.
 
 ### Upgrade tracker primitives
 
@@ -85,39 +84,34 @@ Uniformity contract:
 - Tracker search fields use the app's shared `AppSearchField`; do not style a
   raw `TextField` independently in sheets or tabs.
 - Standard collapsible content uses the shared `CollapsibleItemSection`.
-  Sliver-backed grids use the app's shared sliver section shell with the same
-  DevKit panel tokens, so lazy rendering does not create a second visual style.
+  Sliver-backed grids use a dark header card, then reveal their lazy grid
+  directly on the page background instead of painting a box around the whole
+  expanded section.
 - Upgrade and Player Info artwork tiles share the strong square treatment.
   Collection keeps its artwork-specific tile treatment inside the same section
   shell.
-- Filters use `CKSegmentedControl`; village filters include current Hall assets.
+- Filters use the text-only `CKSegmentedControl`.
 - Do not add one-off search, selector, progress badge, or section-card colors.
 
 - `CKUpgradeRow` keeps game artwork primary and uses one narrow semantic queue
   accent rather than a field of metric chips.
 - `CKResourceCost` presents an icon and amount inline without another framed
   surface.
-- `CKCollectionTile` is artwork-first and uses opacity plus text/semantics for
-  missing state instead of color alone. Do not wrap missing tiles in
-  `ColorFiltered`; per-tile compositing layers make long collection grids
-  noticeably less responsive.
+- `CKCollectionTile` is artwork-first. Missing items use grayscale plus reduced
+  opacity and text/semantics, applied only to visible lazy-grid children.
 - `CKProgressBadge` is a compact supporting treatment, not a replacement for
   the hero progress visualization.
-- Upgrade category grids should match Player Info: one quiet rounded section
-  panel per category, strong square artwork tiles, and no glass on ordinary
-  list content. Preserve lazy sliver construction for long grids.
-- Section shells use a low-contrast neutral fill. Avoid both full glass and
-  heavy opaque dashboard cards for long Upgrade or Collection grids.
-- Village rows are parent navigation surfaces: keep them visible while open,
-  make them wider than their inset category children, and never remove their
-  surface into the page background on expansion. Parent and child headers use
-  the same fixed interaction height; open state is communicated with a stronger
-  neutral fill, never by changing row height.
+- Upgrade category headers should match the app's main Player, Clan, and War
+  cards: near-black surfaces, quiet outlines, and no glass on ordinary list
+  content. Expanded artwork grids remain unboxed and lazy.
+- Village rows are parent navigation surfaces: keep their height stable and
+  communicate expansion through the chevron and revealed hierarchy, without
+  adding a second enclosing surface.
 - Compact category headers use the 44dp interaction minimum without extra
   vertical card padding. This density applies to Upgrade and Collection
   category shells. Phone upgrade grids target five square items per row.
 - Tracker tab content uses one horizontal content gutter for search/filter rows,
-  village parents, and section shells; do not introduce per-tab 14/18/22px
+  village parents, and section headers; do not introduce per-tab 14/18/22px
   variants.
 - Lazy section expansion must animate sliver paint extent with the shared
   motion duration and curve; do not insert or remove a full grid in one frame.

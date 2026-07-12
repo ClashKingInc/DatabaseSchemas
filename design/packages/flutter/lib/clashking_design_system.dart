@@ -445,20 +445,17 @@ class CKSectionPanel extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(CKSpacing.lg),
     this.onTap,
-    this.color,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
-  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final decoration = BoxDecoration(
-      color:
-          color ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.34),
+      color: Theme.of(context).cardTheme.color ?? colorScheme.surface,
       borderRadius: BorderRadius.circular(CKRadius.card),
       border: Border.all(
         color: colorScheme.outlineVariant.withValues(alpha: CKOpacity.border),
@@ -781,18 +778,15 @@ class CKSegmentedControl<T> extends StatelessWidget {
     required this.labels,
     required this.selected,
     required this.onChanged,
-    this.icons,
     this.height,
     this.density = CKControlDensity.standard,
     this.color,
-  }) : assert(values.length == labels.length),
-       assert(icons == null || icons.length == labels.length);
+  }) : assert(values.length == labels.length);
 
   final List<T> values;
   final List<String> labels;
   final T selected;
   final ValueChanged<T> onChanged;
-  final List<Widget>? icons;
   final double? height;
   final CKControlDensity density;
   final Color? color;
@@ -887,18 +881,6 @@ class CKSegmentedControl<T> extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    if (icons != null) ...[
-                                      ExcludeSemantics(
-                                        child: SizedBox.square(
-                                          dimension: 20,
-                                          child: FittedBox(
-                                            fit: BoxFit.contain,
-                                            child: icons![index],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: CKSpacing.xs),
-                                    ],
                                     Flexible(
                                       child: Text(
                                         labels[index],
