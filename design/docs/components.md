@@ -134,8 +134,9 @@ Uniformity contract:
   rule marks the content breakpoint without changing density or restoring an
   enclosing section box.
 - Compact category headers use the 44dp interaction minimum without extra
-  vertical card padding. This density applies to Upgrade and Collection
-  category shells. Phone upgrade grids target five square items per row.
+  vertical card padding. Upgrade and Collection category headers use the same
+  shared compact shell, including padding, artwork size, margin, open divider,
+  and surface behavior. Phone upgrade grids target five square items per row.
 - Tracker tab content uses one horizontal content gutter for search/filter rows,
   village parents, and section headers; do not introduce per-tab 14/18/22px
   variants.
