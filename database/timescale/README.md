@@ -109,6 +109,15 @@ stores one active APNs/FCM token per user, device, provider, and environment wit
 token hash for idempotent registration. Store the encrypted token in `token_ciphertext` and
 use `token_hash` only for lookup/dedupe.
 
+`mobile_notification_preferences` stores the device-wide master switch, enabled notification
+types, and account filters. `mobile_notification_subscriptions` stores per-type/player details.
+Announcement delivery must join these preferences and require the `announcements` type
+instead of broadcasting to every registered token.
+
+`admin_posts.presentation_type` distinguishes block-based articles from hosted interactive
+stories. `show_on_home` controls carousel inclusion, while `pinned_on_home` keeps a post
+ahead of newer home posts without hiding those newer posts.
+
 `mobile_war_subscriptions` stores the selected clan notification preferences per device.
 Tracking workers should query enabled subscriptions by `clan_tag` when war or CWL events
 arrive.
