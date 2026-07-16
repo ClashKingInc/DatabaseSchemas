@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+- Added the shared danger-button variant and disabled toggle state.
+- Added operations-theme control surfaces and focus treatment so admin products
+  do not need to override DevKit primitives locally.
+
+- Added `.ck-theme-operations`, the shared warm-graphite semantic theme for
+  admin and operational dashboards. Consumers keep the common ClashKing
+  component, state, spacing, and brand contracts without locally overriding
+  the DevKit's default navy surface tokens.
+
+- Added `.ck-select`, a rounded native web/admin select with a shared chevron
+  and tokenized hover, focus, disabled, option, and light-theme-compatible
+  states.
+- Added the missing `--ck-color-border-subtle` and
+  `--ck-font-family-mono` web/admin foundation tokens.
+- Added `.ck-metric`, `.ck-toolbar`, `.ck-progress`, and `.ck-tabular` for
+  data-heavy operational views such as Proxy Health. These primitives keep
+  metric hierarchy, filter density, volume tracks, and numeric alignment
+  consistent without introducing consumer-owned copies.
+
 - Added `--ck-radius-tile` (20px) to the CSS token package for parity with
   `CKRadius.tile` on Flutter — the previous radius scale was missing this
   step (control 12 / chip 16 / **tile 20** / panel 28 / pill 999).

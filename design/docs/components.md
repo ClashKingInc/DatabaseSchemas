@@ -189,6 +189,17 @@ state labels remain owned by the localized client.
 
 ## Web/admin primitives
 
+### Operational theme
+
+Apply `.ck-theme-operations` to the document root for dense internal tools.
+It replaces the default navy page and surface semantics with warm graphite,
+while brand colors, status colors, spacing, radii, motion, and component
+contracts remain shared. Do not reproduce these semantic overrides inside a
+consumer stylesheet.
+
+Use the default dark theme for general web surfaces, `.ck-theme-light` for a
+light document, and `.ck-theme-operations` for admin/observability products.
+
 The CSS package exposes:
 
 - `.ck-card` / `.ck-card-flat` — section-level framed surface (radius
@@ -212,6 +223,23 @@ The CSS package exposes:
   `--ck-icon-tile-bg` custom property per instance to a single semantic
   tone; don't rely on DOM position (`:nth-child`) to imply which stat an
   icon represents.
+- `.ck-metric` + `.ck-metric-label` / `-value` / `-detail` — shared
+  operational metric anatomy. Combine it with `.ck-card-flat` when the metric
+  is a peer top-level surface, or `.ck-row` when it lives inside a section.
+  Values use tabular numerals; accent color belongs to the icon tile, not the
+  entire card.
+- `.ck-toolbar` — wrapping control-row layout for filters and local view
+  options. Combine it with `.ck-card-flat` only when it needs a section
+  boundary; keep controls at the 44px interaction minimum.
+- `.ck-select` — rounded native select control with a shared chevron, quiet
+  surface, and tokenized hover/focus/disabled states. Apply it directly to a
+  semantic `<select>` so keyboard and screen-reader behaviour remain native.
+  Use a visible `<label>` or `aria-label`; keep option labels concise.
+- `.ck-progress` / `.ck-progress-fill` — quiet determinate progress or volume
+  track. Set `--ck-progress-color` to a semantic token when the default info
+  tone is not appropriate. Width transitions honor reduced motion.
+- `.ck-tabular` — enables tabular numerals in dense data tables without
+  forcing monospace typography on descriptive cells.
 - `.ck-table` / `.ck-table-wrap` — `.ck-table-wrap` only handles horizontal
   overflow and intentionally carries no border/radius of its own, since a
   table is normally the direct child of a `.ck-card` section.
@@ -222,9 +250,14 @@ overflow. Do not copy those assumptions into native mobile components.
 ## Anti-patterns
 
 - Raw hex colors for recurring brand/stat values.
+- Hand-rolled metric cards, filter toolbars, or progress tracks when the
+  shared web/admin primitives cover the same anatomy.
 - New radius values outside `12 / 16 / 20 / 28 / 999`.
 - Icon-only actions without labels or tooltips.
 - Emoji as structural icons.
+- Unstyled native `<select>` controls or consumer-owned dropdown chrome when
+  `.ck-select` covers the interaction. Do not replace a basic single-choice
+  field with a custom listbox solely to style the popup.
 - Nested framed cards when one section panel would work — concretely, a
   `.ck-card` (or hand-rolled bordered/shadowed row) placed inside another
   `.ck-card`. Use `.ck-row` for the inner content instead.
