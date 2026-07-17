@@ -27,7 +27,9 @@ docker compose -f docker-compose.timescale.yml -f docker-compose.valkey.yml up -
 ```
 
 See [`database/README.md`](database/README.md) and
-[`docs/database-workflows.md`](docs/database-workflows.md).
+[`docs/database-workflows.md`](docs/database-workflows.md). Privacy and retention
+requirements for personal-data schemas live in
+[`database/timescale/privacy_compliance.md`](database/timescale/privacy_compliance.md).
 
 ### Design tokens
 
