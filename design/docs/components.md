@@ -189,15 +189,60 @@ state labels remain owned by the localized client.
 
 ## Web/admin primitives
 
+### Operational theme
+
+Apply `.ck-theme-operations` to the document root for dense internal tools.
+It replaces the default navy page and surface semantics with warm graphite,
+while brand colors, status colors, spacing, radii, motion, and component
+contracts remain shared. Do not reproduce these semantic overrides inside a
+consumer stylesheet.
+
+Use the default dark theme for general web surfaces, `.ck-theme-light` for a
+light document, and `.ck-theme-operations` for admin/observability products.
+
 The CSS package exposes:
 
-- `.ck-card`
-- `.ck-card-flat`
-- `.ck-button`
-- `.ck-badge`
-- `.ck-toggle`
-- `.ck-icon-tile`
-- `.ck-table`
+- `.ck-card` / `.ck-card-flat` — section-level framed surface (radius
+  `panel` = 28, hairline border). `.ck-card` adds the shared soft
+  `--ck-shadow-panel` lift; `.ck-card-flat` omits it. Reach for
+  `.ck-card-flat` first — the shipped app renders every panel at elevation 0
+  (border + surface alpha, no drop shadow); `.ck-card`'s shadow exists for
+  the rare case a surface genuinely needs to lift off a busy background, not
+  as the default.
+- `.ck-row` — quiet nested-content surface for list rows/items living
+  *inside* a `.ck-card`/`.ck-card-flat` section (radius `tile` = 20, tinted
+  fill, no border, no shadow). Use this for every item nested one level
+  inside a section instead of giving it its own `.ck-card`. Mirrors the
+  app's `CKUpgradeRow` treatment.
+- `.ck-button`, `.ck-button-primary`, `.ck-button-secondary`
+- `.ck-badge` + tone modifiers `.ck-badge-success` / `-warning` / `-danger` /
+  `-info` (tone names match `--ck-color-success` etc.; there is no `-good`
+  variant)
+- `.ck-toggle` / `.ck-toggle-on`
+- `.ck-icon-tile` — square icon chip (radius `chip` = 16). Set the
+  `--ck-icon-tile-bg` custom property per instance to a single semantic
+  tone; don't rely on DOM position (`:nth-child`) to imply which stat an
+  icon represents.
+- `.ck-metric` + `.ck-metric-label` / `-value` / `-detail` — shared
+  operational metric anatomy. Combine it with `.ck-card-flat` when the metric
+  is a peer top-level surface, or `.ck-row` when it lives inside a section.
+  Values use tabular numerals; accent color belongs to the icon tile, not the
+  entire card.
+- `.ck-toolbar` — wrapping control-row layout for filters and local view
+  options. Combine it with `.ck-card-flat` only when it needs a section
+  boundary; keep controls at the 44px interaction minimum.
+- `.ck-select` — rounded native select control with a shared chevron, quiet
+  surface, and tokenized hover/focus/disabled states. Apply it directly to a
+  semantic `<select>` so keyboard and screen-reader behaviour remain native.
+  Use a visible `<label>` or `aria-label`; keep option labels concise.
+- `.ck-progress` / `.ck-progress-fill` — quiet determinate progress or volume
+  track. Set `--ck-progress-color` to a semantic token when the default info
+  tone is not appropriate. Width transitions honor reduced motion.
+- `.ck-tabular` — enables tabular numerals in dense data tables without
+  forcing monospace typography on descriptive cells.
+- `.ck-table` / `.ck-table-wrap` — `.ck-table-wrap` only handles horizontal
+  overflow and intentionally carries no border/radius of its own, since a
+  table is normally the direct child of a `.ck-card` section.
 
 CSS primitives may use web-specific affordances such as hover and table
 overflow. Do not copy those assumptions into native mobile components.
@@ -205,7 +250,24 @@ overflow. Do not copy those assumptions into native mobile components.
 ## Anti-patterns
 
 - Raw hex colors for recurring brand/stat values.
+- Hand-rolled metric cards, filter toolbars, or progress tracks when the
+  shared web/admin primitives cover the same anatomy.
 - New radius values outside `12 / 16 / 20 / 28 / 999`.
 - Icon-only actions without labels or tooltips.
 - Emoji as structural icons.
-- Nested framed cards when one section panel would work.
+- Unstyled native `<select>` controls or consumer-owned dropdown chrome when
+  `.ck-select` covers the interaction. Do not replace a basic single-choice
+  field with a custom listbox solely to style the popup.
+- Nested framed cards when one section panel would work — concretely, a
+  `.ck-card` (or hand-rolled bordered/shadowed row) placed inside another
+  `.ck-card`. Use `.ck-row` for the inner content instead.
+- Heavy drop shadows on routine product surfaces. The shipped app uses
+  elevation 0 everywhere (border + alpha only); keep `--ck-shadow-panel`
+  soft and don't stack additional shadows on top of it.
+- Decorative multi-gradient page backgrounds behind ordinary product UI —
+  `.ck-app-surface` keeps a single faint glow for this reason; don't layer
+  more gradients on top of it per-page.
+- Redeclaring a shared `.ck-*` primitive locally in a consuming app instead
+  of importing it — forks the visual language and silently drifts (found
+  and fixed in `clashking-admin-panel`: a local `.ck-badge-good` override
+  never matched the `success` tone the component actually rendered).

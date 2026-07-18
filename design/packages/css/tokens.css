@@ -10,6 +10,8 @@
   --ck-color-capital-purple: #8d63d9;
   --ck-color-builder-blue: #2a9fd6;
   --ck-color-donation-green: #14a37f;
+  --ck-color-legend-blue: #4e7df2;
+  --ck-color-discord-blurple: #5865f2;
 
   /* Web/admin semantic dark theme. */
   --ck-color-bg: #08111f;
@@ -19,6 +21,7 @@
   --ck-color-surface-soft: rgba(30, 41, 59, 0.72);
   --ck-color-surface-muted: rgba(148, 163, 184, 0.08);
   --ck-color-border: rgba(148, 163, 184, 0.18);
+  --ck-color-border-subtle: rgba(148, 163, 184, 0.11);
   --ck-color-border-strong: rgba(148, 163, 184, 0.32);
   --ck-color-text: #e5edf8;
   --ck-color-text-muted: #96a3b8;
@@ -39,6 +42,7 @@
   --ck-color-info-text: #bae6fd;
 
   --ck-font-family: Inter, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ck-font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   --ck-font-size-label-sm: 0.76rem;
   --ck-font-size-label: 0.875rem;
@@ -63,10 +67,15 @@
 
   --ck-radius-control: 12px;
   --ck-radius-chip: 16px;
+  --ck-radius-tile: 20px;
   --ck-radius-panel: 28px;
   --ck-radius-pill: 999px;
 
-  --ck-shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.34);
+  /* Kept deliberately soft — the shipped app renders every card/panel at
+     elevation 0 (border + surface alpha only, no drop shadow). Web/admin
+     surfaces get a faint lift for legibility against a flat page background,
+     never the heavy floating-card shadow a marketing site would use. */
+  --ck-shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.2);
   --ck-shadow-accent: 0 10px 28px rgba(245, 158, 11, 0.24);
 
   --ck-backdrop-blur: blur(18px);
@@ -82,7 +91,30 @@
   --ck-color-surface-soft: rgba(244, 244, 244, 0.9);
   --ck-color-surface-muted: rgba(2, 6, 23, 0.05);
   --ck-color-border: rgba(15, 23, 42, 0.12);
+  --ck-color-border-subtle: rgba(15, 23, 42, 0.08);
   --ck-color-border-strong: rgba(15, 23, 42, 0.22);
   --ck-color-text: #111827;
   --ck-color-text-muted: #4b5563;
+}
+
+/* Warm graphite theme for operational/admin surfaces. It keeps the shared
+   ClashKing brand, state, spacing, and component contracts while avoiding a
+   blue application background that competes with dense product data. */
+.ck-theme-operations {
+  color-scheme: dark;
+  --ck-color-bg: #0d0c0c;
+  --ck-color-bg-strong: #080808;
+  --ck-color-surface: rgba(25, 23, 22, 0.88);
+  --ck-color-surface-solid: #1c1918;
+  --ck-color-surface-soft: rgba(43, 39, 37, 0.76);
+  --ck-color-surface-muted: rgba(255, 247, 240, 0.055);
+  --ck-color-border: rgba(232, 221, 212, 0.12);
+  --ck-color-border-subtle: rgba(232, 221, 212, 0.075);
+  --ck-color-border-strong: rgba(232, 221, 212, 0.22);
+  --ck-color-text: #f2eeea;
+  --ck-color-text-muted: #aaa19b;
+  --ck-color-info: #c9a86a;
+  --ck-color-info-bg: rgba(201, 168, 106, 0.11);
+  --ck-color-info-text: #ead8b4;
+  --ck-shadow-panel: 0 10px 32px rgba(0, 0, 0, 0.24);
 }

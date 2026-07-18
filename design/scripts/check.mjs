@@ -28,10 +28,19 @@ const tokens = read('packages/css/tokens.css');
 for (const token of [
   '--ck-color-primary-red',
   '--ck-color-secondary-blue',
+  '--ck-color-legend-blue',
+  '--ck-color-discord-blurple',
+  '--ck-color-border-subtle',
+  '--ck-font-family-mono',
   '--ck-radius-control',
   '--ck-radius-panel',
 ]) {
   assert(tokens.includes(token), `Missing required CSS token: ${token}`);
+}
+
+const cssComponents = read('packages/css/components.css');
+for (const className of ['ck-metric', 'ck-toolbar', 'ck-select', 'ck-progress', 'ck-tabular']) {
+  assert(cssComponents.includes(`.${className}`), `Missing required CSS primitive: .${className}`);
 }
 
 const flutterTokens = read('packages/flutter/lib/clashking_design_system.dart');
