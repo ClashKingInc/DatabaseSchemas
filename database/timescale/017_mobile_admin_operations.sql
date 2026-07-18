@@ -327,7 +327,13 @@ INSERT INTO public.admin_notification_campaigns
     (campaign_key, title, body, target_route, platforms, status, trigger_type, day_of_month, send_time, last_sent_at, created_by)
 VALUES
     ('monthly-support', 'New Season is Live', 'A new season has started. If you''re getting the Gold Pass, consider using creator code ClashKing.', '/settings/support', '{ios,android,web}', 'scheduled', 'monthly', 1, '09:00', now(), 'system')
-ON CONFLICT (campaign_key) DO NOTHING;
+ON CONFLICT (campaign_key) DO UPDATE
+SET title = EXCLUDED.title,
+    body = EXCLUDED.body,
+    translations = '{}'::jsonb,
+    updated_at = now()
+WHERE admin_notification_campaigns.title = 'Support ClashKing'
+  AND admin_notification_campaigns.body = 'Monthly support helps keep ClashKing available and improving. Thank you.';
 
 -- Mobile feature catalogue. Established features fail open in the client;
 -- preview/incomplete surfaces are disabled until explicitly enabled by an
