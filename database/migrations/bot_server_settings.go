@@ -39,9 +39,6 @@ func runBotServerSettings(ctx context.Context, cfg migrateutil.Config) error {
 		return err
 	}
 
-	if err := migrateServers(ctx, cfg, cp, pool, staticClient.Database("usafam").Collection("server")); err != nil {
-		return err
-	}
 	if err := migrateBotSettings(ctx, cfg, cp, pool, staticClient.Database("bot").Collection("settings")); err != nil {
 		return err
 	}
@@ -60,9 +57,6 @@ func runBotServerSettings(ctx context.Context, cfg migrateutil.Config) error {
 	if err := migrateReminders(ctx, cfg, cp, pool, staticClient.Database("usafam").Collection("reminders")); err != nil {
 		return err
 	}
-	if err := migrateRosters(ctx, cfg, cp, pool, staticClient.Database("usafam").Collection("rosters")); err != nil {
-		return err
-	}
 	if err := migrateGiveaways(ctx, cfg, cp, pool, statsClient.Database("clashking").Collection("giveaways")); err != nil {
 		return err
 	}
@@ -70,57 +64,6 @@ func runBotServerSettings(ctx context.Context, cfg migrateutil.Config) error {
 		return err
 	}
 	return nil
-}
-
-func migrateServers(ctx context.Context, cfg migrateutil.Config, cp *migrateutil.Checkpoint, pool interface {
-	Begin(context.Context) (pgx.Tx, error)
-}, collection *mongo.Collection) error {
-	rows := make([][]any, 0, cfg.BatchSize)
-	flush := func() error {
-		err := flushRows(ctx, pool, "servers", []string{"id", "name", "embed_color", "logs_config", "status_roles", "countdowns", "data"}, rows, `
-			INSERT INTO servers (id, name, embed_color, logs_config, status_roles, countdowns, data)
-			SELECT id, COALESCE(NULLIF(name, ''), id), NULLIF(embed_color, ''), logs_config::jsonb, status_roles::jsonb, countdowns::jsonb, data::jsonb
-			FROM _ck_rows
-			ON CONFLICT (id) DO UPDATE SET
-				name = EXCLUDED.name,
-				embed_color = EXCLUDED.embed_color,
-				logs_config = EXCLUDED.logs_config,
-				status_roles = EXCLUDED.status_roles,
-				countdowns = EXCLUDED.countdowns,
-				data = EXCLUDED.data,
-				updated_at = now()
-		`)
-		if err == nil {
-			rows = rows[:0]
-		}
-		return err
-	}
-	seen, err := migrateutil.StreamByObjectID(ctx, cfg, cp, "server_id", collection, func(doc bson.M) (bool, error) {
-		rows = append(rows, []any{
-			migrateutil.String(doc["server"]),
-			migrateutil.String(doc["name"]),
-			migrateutil.String(doc["embed_color"]),
-			migrateutil.RawJSON(map[string]any{
-				"greeting":             doc["greeting"],
-				"welcome_link_channel": doc["welcome_link_channel"],
-				"welcome_link_embed":   doc["welcome_link_embed"],
-			}),
-			migrateutil.RawJSON(map[string]any{
-				"leadership_eval": doc["leadership_eval"],
-				"auto_nick":       doc["auto_nick"],
-			}),
-			migrateutil.RawJSON(map[string]any{
-				"games": doc["gamesCountdown"],
-				"cwl":   doc["cwlCountdown"],
-				"raid":  doc["raidCountdown"],
-				"eos":   doc["eosCountdown"],
-			}),
-			migrateutil.RawJSON(doc),
-		})
-		return len(rows) >= cfg.BatchSize, nil
-	}, flush)
-	fmt.Printf("settings.server: scanned_docs=%d\n", seen)
-	return err
 }
 
 func migrateBotSettings(ctx context.Context, cfg migrateutil.Config, cp *migrateutil.Checkpoint, pool interface {
@@ -321,60 +264,6 @@ func migrateReminders(ctx context.Context, cfg migrateutil.Config, cp *migrateut
 		return len(rows) >= cfg.BatchSize, nil
 	}, flush)
 	fmt.Printf("settings.reminders: scanned_docs=%d\n", seen)
-	return err
-}
-
-func migrateRosters(ctx context.Context, cfg migrateutil.Config, cp *migrateutil.Checkpoint, pool interface {
-	Begin(context.Context) (pgx.Tx, error)
-}, collection *mongo.Collection) error {
-	rows := make([][]any, 0, cfg.BatchSize)
-	flush := func() error {
-		err := flushRows(ctx, pool, "rosters", []string{"id", "server_id", "linked_clan_tag", "title", "description", "max_size", "image_url", "custom_id", "clan_tag", "alias", "members", "data"}, rows, `
-			INSERT INTO rosters (id, server_id, linked_clan_tag, title, description, max_size, image_url, custom_id, clan_tag, alias, members, data)
-			SELECT id::uuid, server_id, linked_clan_tag, title, description, max_size, NULLIF(image_url, ''), NULLIF(custom_id, ''), NULLIF(clan_tag, ''), alias, members::jsonb, data::jsonb
-			FROM _ck_rows
-			WHERE server_id <> '' AND title <> ''
-			ON CONFLICT (id) DO UPDATE SET
-				server_id = EXCLUDED.server_id,
-				linked_clan_tag = EXCLUDED.linked_clan_tag,
-				title = EXCLUDED.title,
-				description = EXCLUDED.description,
-				max_size = EXCLUDED.max_size,
-				image_url = EXCLUDED.image_url,
-				custom_id = EXCLUDED.custom_id,
-				clan_tag = EXCLUDED.clan_tag,
-				alias = EXCLUDED.alias,
-				members = EXCLUDED.members,
-				data = EXCLUDED.data,
-				updated_at = now()
-		`)
-		if err == nil {
-			rows = rows[:0]
-		}
-		return err
-	}
-	seen, err := migrateutil.StreamByObjectID(ctx, cfg, cp, "rosters_id", collection, func(doc bson.M) (bool, error) {
-		token := migrateutil.String(doc["token"])
-		if token == "" {
-			token = migrateutil.String(doc["_id"])
-		}
-		rows = append(rows, []any{
-			stableUUID("roster", token),
-			migrateutil.String(doc["server_id"]),
-			migrateutil.String(doc["clan_tag"]),
-			firstSettingString(doc["clan_name"], doc["alias"], doc["token"]),
-			migrateutil.String(doc["description"]),
-			migrateutil.Int(doc["roster_size"]),
-			migrateutil.String(doc["image"]),
-			token,
-			migrateutil.String(doc["clan_tag"]),
-			migrateutil.String(doc["alias"]),
-			migrateutil.RawJSON(doc["members"]),
-			migrateutil.RawJSON(doc),
-		})
-		return len(rows) >= cfg.BatchSize, nil
-	}, flush)
-	fmt.Printf("settings.rosters: scanned_docs=%d\n", seen)
 	return err
 }
 

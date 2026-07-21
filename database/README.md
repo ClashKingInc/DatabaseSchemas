@@ -84,6 +84,33 @@ Each tool documents its required environment keys in code and fails closed when
 required values are absent. Never commit the local `.env` file or migration
 checkpoint data.
 
+For the server settings cutover, apply Goose migrations `019` through `024`.
+Then run the four imports in this order:
+
+```bash
+cd migrations
+go run server_clans.go
+go run server_settings.go
+go run rosters.go
+go run bot_server_settings.go
+```
+
+Migration `019` copies existing Timescale settings into normalized tables before
+it removes the old JSON columns and retired tables. Migration `020` replaces the
+aggregate server and clan log tables with one `server_logs` row for each server,
+optional clan, and log type. It stores the webhook ID and optional thread ID. It
+does not store the Discord channel because the webhook identifies the channel.
+Migration `021` adds a disabled state so a log can stop without losing its
+webhook or thread setup. Migration `022` removes server-clan links that have no
+`basic_clan` row and adds a cascading foreign key so they cannot return.
+Migration `023` renames `role_rules` to `server_roles`, changes the combined
+role mode from `sync` to `both`, and removes ignored, exclusive-family, and
+duplicate server-level member roles.
+Migration `024` prevents those removed family-role options from being created
+again.
+The four imports then copy the current Mongo documents into those tables. The
+migrations and importers do not truncate or update `player_links`.
+
 See [`../docs/database-workflows.md`](../docs/database-workflows.md) for the
 Goose, backfill, remote-run, and validation workflow.
 
